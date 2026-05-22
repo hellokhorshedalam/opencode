@@ -222,7 +222,6 @@ export const SettingsGeneral: Component = () => {
   const themeOptions = createMemo<ThemeOption[]>(() => theme.ids().map((id) => ({ id, name: theme.name(id) })))
 
   const globalSync = useGlobalSync()
-  const globalSdk = useGlobalSDK()
 
   const [shells] = createResource(
     () =>
