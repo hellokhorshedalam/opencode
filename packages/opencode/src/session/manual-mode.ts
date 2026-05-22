@@ -15,11 +15,11 @@ export class ManualRequest extends Schema.Class<ManualRequest>("ManualRequest")(
   providerID: Schema.optional(ProviderID),
   modelID: Schema.optional(ModelID),
   createdAt: Schema.Number,
-  status: Schema.Union(
+  status: Schema.Union([
     Schema.Literal("pending"),
     Schema.Literal("completed"),
     Schema.Literal("cancelled"),
-  ),
+  ]),
 }) {}
 
 /**
