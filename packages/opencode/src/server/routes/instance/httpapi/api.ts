@@ -25,7 +25,7 @@ import { Authorization } from "./middleware/authorization"
 import { SchemaErrorMiddleware } from "./middleware/schema-error"
 
 // SSE event schemas built from the BusEvent/SyncEvent registries.
-const EventSchema = Schema.Union(BusEvent.effectPayloads()).annotate({ identifier: "Event" })
+const EventSchema = Schema.Union(BusEvent.effectPayloads().toArray()).annotate({ identifier: "Event" })
 const SyncEventSchemas = SyncEvent.effectPayloads()
 
 export const RootHttpApi = HttpApi.make("opencode-root")

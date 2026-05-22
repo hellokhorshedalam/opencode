@@ -27,7 +27,7 @@ const ManualRequestList = Schema.Array(
     providerID: Schema.optional(Schema.String),
     modelID: Schema.optional(Schema.String),
     createdAt: Schema.Number,
-    status: Schema.Union(Schema.Literal("pending"), Schema.Literal("completed"), Schema.Literal("cancelled")),
+    status: Schema.Union([Schema.Literal("pending"), Schema.Literal("completed"), Schema.Literal("cancelled")]),
   }),
 ).annotate({ identifier: "ManualRequestList" })
 

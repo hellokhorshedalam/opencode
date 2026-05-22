@@ -9,6 +9,6 @@ export const AuthError = NamedError.create("ProviderAuthError", {
 })
 
 export const Shared = [AuthError.EffectSchema, NamedError.Unknown.EffectSchema, OutputLengthError.EffectSchema] as const
-export const SharedSchema = Schema.Union(Shared)
+export const SharedSchema = Schema.Union([...Shared])
 
 export * as MessageError from "./message-error"
