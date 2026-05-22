@@ -46,6 +46,9 @@ export const ManualApiGroup = (handlers: any) =>
     .handle("submitResponse", submitResponseHandler)
     .handle("cancelRequest", cancelRequestHandler)
 
+// Handlers export for server.ts
+export const manualModeHandlers = [ManualApiGroup]
+
 // Handlers
 const toggleHandler = Effect.fn("ManualModeHttpApi.toggle")(function* (ctx: {
   payload: typeof ManualTogglePayload.Type

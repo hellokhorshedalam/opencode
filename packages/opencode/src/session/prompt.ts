@@ -61,6 +61,7 @@ import { referencePromptMetadata, referenceTextPart } from "./prompt/reference"
 import { SessionReminders } from "./reminders"
 import { SessionTools } from "./tools"
 import { LLMEvent } from "@opencode-ai/llm"
+import { ManualModeService } from "./manual-mode"
 
 // @ts-ignore
 globalThis.AI_SDK_LOG_WARNINGS = false
@@ -123,6 +124,7 @@ export const layer = Layer.effect(
     const references = yield* Reference.Service
     const events = yield* EventV2Bridge.Service
     const flags = yield* RuntimeFlags.Service
+    const manualMode = yield* ManualModeService
     const ops = Effect.fn("SessionPrompt.ops")(function* () {
       return {
         cancel: (sessionID: SessionID) => cancel(sessionID),
@@ -1222,6 +1224,30 @@ export const layer = Layer.effect(
       if (permissions.length > 0) {
         session.permission = permissions
         yield* sessions.setPermission({ sessionID: session.id, permission: permissions })
+      }
+
+      // Check if manual mode is enabled
+      const isManualModeEnabled = yield* manualMode.isEnabled()
+      
+      if (isManualModeEnabled && input.noReply !== true) {
+        // Get the last user message parts to extract the prompt text
+        const textParts = message.parts.filter((p): p is MessageV2.TextPart => p.type === "text")
+        const promptText = textParts.map(p => p.text).join("\n")
+        
+        // Create a manual request
+        const manualRequest = yield* manualMode.createRequest({
+          sessionId: input.sessionID,
+          messageId: message.info.id,
+          prompt: promptText,
+          providerID: input.model.providerID,
+          modelID: input.model.modelID,
+        })
+        
+        // Publish event to notify UI about new manual request
+        yield* bus.publish("@opencode/manual-mode/request-created", manualRequest)
+        
+        // Return the user message without triggering auto-response
+        return message
       }
 
       if (input.noReply === true) return message
