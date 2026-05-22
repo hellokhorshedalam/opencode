@@ -135,3 +135,5 @@ export class Service extends Effect.Service<ManualModeService>()("@opencode/Manu
       }),
   },
 }) {}
+
+export { Service as ManualModeService }
