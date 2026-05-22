@@ -1,4 +1,4 @@
-import { Effect, Schema } from "effect"
+import { Effect, Schema, Context } from "effect"
 import { SessionID, MessageID } from "./schema"
 import { ProviderID, ModelID } from "@/provider/schema"
 
@@ -15,11 +15,11 @@ export class ManualRequest extends Schema.Class<ManualRequest>("ManualRequest")(
   providerID: Schema.optional(ProviderID),
   modelID: Schema.optional(ModelID),
   createdAt: Schema.Number,
-  status: Schema.Union([
+  status: Schema.Union(
     Schema.Literal("pending"),
     Schema.Literal("completed"),
     Schema.Literal("cancelled"),
-  ]),
+  ),
 }) {}
 
 /**
@@ -59,9 +59,9 @@ export interface ManualModeService {
 
 const MANUAL_MODE_ENABLED_KEY = "__manualModeEnabled"
 
-export class Service extends Effect.Service<ManualModeService>()("@opencode/ManualMode", {
+export class Service extends Context.Service<Service, ManualModeService>()("@opencode/ManualMode", {
   succeed: {
-    isEnabled: () => Effect.sync(() => !!(globalThis as any)[MANUAL_MODE_ENABLED_KEY]),
+    isEnabled: () => !!(globalThis as any)[MANUAL_MODE_ENABLED_KEY],
     
     toggle: (enabled) =>
       Effect.sync(() => {
