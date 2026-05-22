@@ -1,4 +1,4 @@
-```
+```gitignore
 # Dependencies
 node_modules/
 
@@ -16,9 +16,10 @@ __pycache__/
 env/
 venv/
 .venv/
+.ENV
 .python-version
-.mypy_cache/
 .pytest_cache/
+.mypy_cache/
 .coverage
 coverage/
 
@@ -35,13 +36,13 @@ coverage/
 .idea/
 *.swp
 *.swo
-*.tmp
+*~
 
 # OS
 .DS_Store
 Thumbs.db
 
-# Compressed files
+# Compressed
 *.zip
 *.gz
 *.tar
