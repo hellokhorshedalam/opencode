@@ -451,7 +451,7 @@ export const SettingsGeneral: Component = () => {
         >
           <div data-action="settings-manual-mode">
             <Switch
-              checked={manualModeStore.enabled()}
+              checked={manualModeStore.enabled}
               onChange={(checked) => toggleManualMode(checked)}
             />
           </div>
