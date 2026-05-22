@@ -88,6 +88,7 @@ import { corsVaryFix } from "./middleware/cors-vary"
 import { errorLayer } from "./middleware/error"
 import { fenceLayer } from "./middleware/fence"
 import { schemaErrorLayer } from "./middleware/schema-error"
+import { ManualModeService } from "@/session/manual-mode"
 
 export const context = Context.makeUnsafe<unknown>(new Map())
 
@@ -235,6 +236,7 @@ export function createRoutes(
       AppFileSystem.defaultLayer,
       FetchHttpClient.layer,
       HttpServer.layerServices,
+      ManualModeService.defaultLayer,
     ]),
     Layer.provide(Layer.succeed(CorsConfig)(corsOptions)),
     Layer.provide(InstanceLayer.layer),

@@ -88,10 +88,56 @@ export const SettingsGeneral: Component = () => {
   const platform = usePlatform()
   const params = useParams()
   const settings = useSettings()
+  const globalSdk = useGlobalSDK()
 
   const [store, setStore] = createStore({
     checking: false,
   })
+
+  const [manualModeStore, setManualModeStore] = createStore({
+    enabled: false,
+    loading: false,
+  })
+
+  // Fetch manual mode status on mount
+  const fetchManualModeStatus = async () => {
+    try {
+      const response = await globalSdk.client.manual.status()
+      setManualModeStore("enabled", response.data?.enabled ?? false)
+    } catch (error) {
+      console.error("Failed to fetch manual mode status:", error)
+    }
+  }
+
+  // Toggle manual mode
+  const toggleManualMode = async (enabled: boolean) => {
+    setManualModeStore("loading", true)
+    try {
+      await globalSdk.client.manual.toggle({ enabled })
+      setManualModeStore("enabled", enabled)
+      showToast({
+        variant: enabled ? "success" : "info",
+        icon: enabled ? "circle-check" : "info",
+        title: enabled ? "Manual Mode Enabled" : "Manual Mode Disabled",
+        description: enabled
+          ? "Requests will now appear in the manual panel for you to handle."
+          : "Automatic AI responses are now enabled.",
+      })
+    } catch (error) {
+      showToast({
+        variant: "error",
+        icon: "circle-x",
+        title: "Failed to toggle manual mode",
+        description: error instanceof Error ? error.message : String(error),
+      })
+      setManualModeStore("enabled", !enabled)
+    } finally {
+      setManualModeStore("loading", false)
+    }
+  }
+
+  // Initial fetch
+  void fetchManualModeStatus()
 
   const linux = createMemo(() => platform.platform === "desktop" && platform.os === "linux")
   const dir = createMemo(() => decode64(params.dir))
@@ -396,6 +442,18 @@ export const SettingsGeneral: Component = () => {
             <Switch
               checked={settings.general.showSessionProgressBar()}
               onChange={(checked) => settings.general.setShowSessionProgressBar(checked)}
+            />
+          </div>
+        </SettingsRow>
+
+        <SettingsRow
+          title="Manual Mode"
+          description="Enable manual mode to handle requests without automatic AI responses. When enabled, you'll see requests in a panel where you can copy them to any chatbot and submit responses manually."
+        >
+          <div data-action="settings-manual-mode">
+            <Switch
+              checked={manualModeStore.enabled()}
+              onChange={(checked) => toggleManualMode(checked)}
             />
           </div>
         </SettingsRow>
